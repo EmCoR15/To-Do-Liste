@@ -13,7 +13,6 @@ public class ToDoEntryService {
     ToDoEntryRepository repo;
 
     public ToDoEntry save(ToDoEntry entry) {
-        // id lieber von der DB erzeugen lassen:
         entry.setId(null);
         return repo.save(entry);
     }
