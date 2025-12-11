@@ -13,7 +13,6 @@ public class ToDoEntryController {
     public List<ToDoEntry> getTodoEntries() {
         return List.of(
                 new ToDoEntry(
-                        1,
                         "L1",
                         "Beispielbeschreibung",
                         LocalDateTime.now().plusDays(1),
