@@ -1,6 +1,6 @@
 package webtech.toDoListe;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,13 +15,15 @@ import java.util.UUID;
 @RequestMapping("/auth")
 @CrossOrigin(origins = "http://localhost:5173") // oder deine Frontend-URL
 public class AuthController {
+    @Value("${app.auth.user}")
+    private String validUser;
+
+    @Value("${app.auth.pass}")
+    private String validPass;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req) {
 
-        // Login Passwort
-        String validUser = "webtechstudent";
-        String validPass = "supergeheim123";
 
         if (validUser.equals(req.getUsername()) && validPass.equals(req.getPassword())) {
             // Dummy-Token (kann einfach eine UUID sein)
