@@ -29,4 +29,8 @@ public class ToDoEntryService {
         }
         return todos;
     }
+
+    public void delete(Long id) {
+        repo.deleteById(id);
+    }
 }

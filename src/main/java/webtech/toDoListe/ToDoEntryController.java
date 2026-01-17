@@ -3,6 +3,7 @@ package webtech.toDoListe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,5 +36,13 @@ public class ToDoEntryController {
     public List<ToDoEntry> getAllTodos() {
         logger.info("GET /todos (alle)");
         return service.getAll();
+    }
+
+    @CrossOrigin
+    @DeleteMapping("/todos/{id}")
+    public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
+        logger.info("DELETE /todos/{}", id);
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
