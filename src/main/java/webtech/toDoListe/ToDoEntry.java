@@ -4,6 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,8 +16,15 @@ public class ToDoEntry {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "Name darf nicht leer sein")
+    @Size(min = 3, max = 100, message = "Name muss zwischen 3 und 100 Zeichen lang sein")
     private String name;
+
+    @Size(max = 500, message = "Beschreibung darf maximal 500 Zeichen lang sein")
     private String description;
+
+    @Future(message = "Fälligkeitsdatum muss in der Zukunft liegen")
     private LocalDateTime dueTime;
     private boolean done;
 
@@ -29,7 +40,7 @@ public class ToDoEntry {
     }
 
 
-    // Getter – unbedingt notwendig für JSON (Jackson)
+
     public Long getId() { return id; }
     public String getName() { return name; }
     public String getDescription() { return description; }

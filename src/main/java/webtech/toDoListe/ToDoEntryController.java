@@ -1,11 +1,12 @@
 package webtech.toDoListe;
 
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -19,10 +20,10 @@ public class ToDoEntryController {
 
     @CrossOrigin
     @PostMapping("/todos")
-    public ResponseEntity<ToDoEntry> createTodo(@RequestBody ToDoEntry todo) {  // ResponseEntity
+    public ResponseEntity<ToDoEntry> createTodo(@Valid @RequestBody ToDoEntry todo) {  // @Valid hinzugefügt
         logger.info("POST /todos mit Name={}", todo.getName());
         ToDoEntry saved = service.save(todo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);  // 201 Created
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @CrossOrigin
@@ -41,10 +42,18 @@ public class ToDoEntryController {
     }
 
     @CrossOrigin
+    @PutMapping("/todos/{id}")
+    public ResponseEntity<ToDoEntry> updateTodo(@PathVariable Long id, @Valid @RequestBody ToDoEntry todo) {  // @Valid
+        logger.info("PUT /todos/{}", id);
+        ToDoEntry updated = service.update(id, todo);
+        return ResponseEntity.ok(updated);
+    }
+
+    @CrossOrigin
     @DeleteMapping("/todos/{id}")
     public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
         logger.info("DELETE /todos/{}", id);
         service.delete(id);
-        return ResponseEntity.noContent().build();  // 204 No Content
+        return ResponseEntity.noContent().build();
     }
 }

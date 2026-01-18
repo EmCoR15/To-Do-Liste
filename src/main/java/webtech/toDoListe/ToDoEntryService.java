@@ -29,8 +29,23 @@ public class ToDoEntryService {
         }
         return todos;
     }
+    public ToDoEntry update(Long id, ToDoEntry updatedEntry) {
+        ToDoEntry existing = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("ToDo mit ID " + id + " nicht gefunden"));
+
+        // Felder aktualisieren
+        existing.setName(updatedEntry.getName());
+        existing.setDescription(updatedEntry.getDescription());
+        existing.setDueTime(updatedEntry.getDueTime());
+        existing.setDone(updatedEntry.isDone());
+
+        return repo.save(existing);
+    }
 
     public void delete(Long id) {
+        if (!repo.existsById(id)) {
+            throw new RuntimeException("ToDo mit ID " + id + " nicht gefunden");
+        }
         repo.deleteById(id);
     }
 }
