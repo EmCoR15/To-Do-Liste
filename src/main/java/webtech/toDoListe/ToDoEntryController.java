@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -18,9 +19,10 @@ public class ToDoEntryController {
 
     @CrossOrigin
     @PostMapping("/todos")
-    public ToDoEntry createTodo(@RequestBody ToDoEntry todo) {
+    public ResponseEntity<ToDoEntry> createTodo(@RequestBody ToDoEntry todo) {  // ResponseEntity
         logger.info("POST /todos mit Name={}", todo.getName());
-        return service.save(todo);
+        ToDoEntry saved = service.save(todo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);  // 201 Created
     }
 
     @CrossOrigin
@@ -43,6 +45,6 @@ public class ToDoEntryController {
     public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
         logger.info("DELETE /todos/{}", id);
         service.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();  // 204 No Content
     }
 }
