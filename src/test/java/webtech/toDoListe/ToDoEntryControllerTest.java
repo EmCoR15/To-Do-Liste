@@ -30,20 +30,51 @@ class ToDoEntryControllerTest {
     ToDoEntryService service; // Gemockter Service als Abhängigkeit
 
     /**
+     * Erstellt ein gültiges ToDoEntry-Objekt mit den angegebenen Parametern.
+     *
+     * @param id Die ID des ToDo-Eintrags.
+     * @return Ein gültiges ToDoEntry-Objekt.
+     */
+    private ToDoEntry validTodo(Long id) {
+        ToDoEntry todo = new ToDoEntry(
+                "TestTask",                 // >= 3 Zeichen
+                "Beschreibung",
+                LocalDateTime.now().plusDays(1), // immer Zukunft
+                false
+        );
+        todo.setId(id);
+        return todo;
+    }
+
+    /**
+     * Erstellt einen gültigen JSON-String, der ein ToDoEntry repräsentiert.
+     *
+     * @return Ein gültiger JSON-String für ein ToDoEntry.
+     */
+    private String validTodoJson() {
+        return """
+          {
+            "name": "TestTask",
+            "description": "Beschreibung",
+            "dueTime": "%s",
+            "done": false
+          }
+        """.formatted(LocalDateTime.now().plusDays(1));
+    }
+
+    /**
      * Testet, ob der Endpunkt getAllTodos eine Liste von ToDo-Einträgen
      * mit dem korrekten HTTP-Status und JSON-Format zurückgibt.
      */
     @Test
     void getAllTodos_returnsList() throws Exception {
-        ToDoEntry a = new ToDoEntry("A", "B", LocalDateTime.now().plusDays(1), false);
-        a.setId(1L);
-        when(service.getAll()).thenReturn(List.of(a));
+        when(service.getAll()).thenReturn(List.of(validTodo(1L)));
 
         mvc.perform(get("/todos"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("A"));
+                .andExpect(jsonPath("$[0].name").value("TestTask"));
     }
 
     /**
@@ -52,14 +83,12 @@ class ToDoEntryControllerTest {
      */
     @Test
     void getTodo_byId_returnsEntry() throws Exception {
-        ToDoEntry a = new ToDoEntry("A", "B", LocalDateTime.now().plusDays(1), false);
-        a.setId(5L);
-        when(service.get(5L)).thenReturn(a);
+        when(service.get(5L)).thenReturn(validTodo(5L));
 
         mvc.perform(get("/todos/5"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(5))
-                .andExpect(jsonPath("$.name").value("A"));
+                .andExpect(jsonPath("$.name").value("TestTask"));
     }
 
     /**
@@ -69,21 +98,14 @@ class ToDoEntryControllerTest {
      */
     @Test
     void createTodo_callsServiceAndReturnsCreatedObject() throws Exception {
-        ToDoEntry saved = new ToDoEntry("A", "B", LocalDateTime.now().plusDays(1), false);
-        saved.setId(10L);
-
-        when(service.save(any(ToDoEntry.class))).thenReturn(saved);
-
-        String body = """
-          {"name":"A","description":"B","dueTime":"2026-01-20T12:00:00","done":false}
-        """;
+        when(service.save(any(ToDoEntry.class))).thenReturn(validTodo(10L));
 
         mvc.perform(post("/todos")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                .andExpect(status().isCreated())  // 201 wenn du Controller geändert hast
+                        .content(validTodoJson()))
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(10))
-                .andExpect(jsonPath("$.name").value("A"));
+                .andExpect(jsonPath("$.name").value("TestTask"));
     }
 
     /**
